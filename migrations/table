@@ -1,0 +1,20 @@
+CREATE TYPE post_status AS ENUM ('draft', 'publish');
+
+CREATE TABLE posts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(255) NOT NULL,
+    content TEXT,
+    status post_status NOT NULL DEFAULT 'draft',
+    publish_date DATE
+);
+
+CREATE TABLE tags (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    label VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE post_tags (
+    post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+    tag_id UUID REFERENCES tags(id) ON DELETE CASCADE,
+    PRIMARY KEY (post_id, tag_id)
+);
