@@ -1,0 +1,19 @@
+-- Table: public.posts
+
+-- DROP TABLE IF EXISTS public.posts;
+
+CREATE TABLE IF NOT EXISTS public.posts
+(
+    id uuid NOT NULL DEFAULT gen_random_uuid(),
+    title character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    content text COLLATE pg_catalog."default",
+    status post_status NOT NULL DEFAULT 'draft'::post_status,
+    publish_date date,
+    tags uuid[],
+    CONSTRAINT posts_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.posts
+    OWNER to postgres;

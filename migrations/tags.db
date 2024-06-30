@@ -1,0 +1,17 @@
+-- Table: public.tags
+
+-- DROP TABLE IF EXISTS public.tags;
+
+CREATE TABLE IF NOT EXISTS public.tags
+(
+    id uuid NOT NULL DEFAULT gen_random_uuid(),
+    label character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    posts uuid[],
+    CONSTRAINT tags_pkey PRIMARY KEY (id),
+    CONSTRAINT tags_label_key UNIQUE (label)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.tags
+    OWNER to postgres;

@@ -1,0 +1,23 @@
+-- Table: public.post_tags
+
+-- DROP TABLE IF EXISTS public.post_tags;
+
+CREATE TABLE IF NOT EXISTS public.post_tags
+(
+    post_id uuid NOT NULL,
+    tag_id uuid NOT NULL,
+    CONSTRAINT post_tags_pkey PRIMARY KEY (post_id, tag_id),
+    CONSTRAINT post_tags_post_id_fkey FOREIGN KEY (post_id)
+        REFERENCES public.posts (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT post_tags_tag_id_fkey FOREIGN KEY (tag_id)
+        REFERENCES public.tags (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.post_tags
+    OWNER to postgres;
