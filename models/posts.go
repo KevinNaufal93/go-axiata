@@ -43,14 +43,18 @@ func (p *Posts) CreatePost(db *sql.DB) (map[string]interface{}, error) {
 
         _, err = tx.Exec("INSERT INTO post_tags (post_id, tag_id) VALUES ($1, $2)", p.ID, tagID)
         if err != nil {
-            fmt.Printf("Error post_tag IDs: %v\n", err)
-            return nil,err
+            return nil, err
         }
+
+        _, err = tx.Exec("UPDATE tags SET posts = array_append(posts, $1) WHERE id = $2", p.ID, tagID)
+        if err != nil {
+            return nil, err
+        }
+
         tagLabels = append(tagLabels, tag)
         tagIDs = append(tagIDs, tagID)
     }
 
-    fmt.Printf("Tag IDs: %v\n", tagIDs)
     _, err = tx.Exec("UPDATE posts SET tags = $1 WHERE id = $2", pq.Array(tagIDs), p.ID)
     if err != nil {
         return nil,err
@@ -88,6 +92,11 @@ func (p *Posts) UpdatePost(db *sql.DB) (map[string]interface{}, error) {
         return nil, err
     }
 
+    _, err = tx.Exec("UPDATE tags SET posts = array_remove(posts, $1)", p.ID)
+    if err != nil {
+        return nil, err
+    }
+
     _, err = tx.Exec("DELETE FROM post_tags WHERE post_id = $1", p.ID)
     if err != nil {
         return nil, err
@@ -109,7 +118,6 @@ func (p *Posts) UpdatePost(db *sql.DB) (map[string]interface{}, error) {
         tagLabels = append(tagLabels, tag)
     }
 
-    fmt.Printf("Tag Prints: %v\n", tagLabels)
 
     err = tx.Commit();
 
@@ -148,7 +156,9 @@ func GetPosts(db *sql.DB, tagQuery string) ([]map[string]interface{}, error) {
     } else {
         query = `
         SELECT p.id, p.title, p.content,
-        ARRAY_AGG(t.label) AS tags
+        COALESCE(
+            ARRAY_AGG(t.label) FILTER (WHERE t.label IS NOT NULL), ARRAY[]::text[]
+        ) AS tags
         FROM posts p
         LEFT JOIN post_tags pt ON p.id = pt.post_id
         LEFT JOIN tags t ON pt.tag_id = t.id
@@ -168,7 +178,7 @@ func GetPosts(db *sql.DB, tagQuery string) ([]map[string]interface{}, error) {
             id          uuid.UUID
             title       string
             content     string
-            tags        []string
+            tags        []sql.NullString
         )
 
         err := rows.Scan(&id, &title, &content, pq.Array(&tags))
@@ -176,11 +186,18 @@ func GetPosts(db *sql.DB, tagQuery string) ([]map[string]interface{}, error) {
             return nil, err
         }
 
+        var tagLabels []string
+        for _, tag := range tags {
+            if tag.Valid {
+                tagLabels = append(tagLabels, tag.String)
+            }
+        }
+
         post := map[string]interface{}{
             "id":      id,
             "title":   title,
             "content": content,
-            "tags":    tags,
+            "tags":    tagLabels,
         }
 
         posts = append(posts, post)
@@ -204,17 +221,26 @@ func (p *Posts) GetPost(db *sql.DB) (map[string]interface{}, error) {
 
     var updatedId uuid.UUID
     var updatedTitle, updatedContent string
-    var updatedTags []string
+    var updatedTags []sql.NullString
     query := `
         SELECT p.id, p.title, p.content,
-        ARRAY_AGG(t.label) AS tags
+        COALESCE(
+            ARRAY_AGG(t.label) FILTER (WHERE t.label IS NOT NULL), ARRAY[]::text[]
+        ) AS tags        
         FROM posts p
-        LEFT JOIN post_tags pt ON p.id = pt.post_id
-        LEFT JOIN tags t ON pt.tag_id = t.id
+        LEFT JOIN post_tags pt ON pt.post_id = p.id 
+        LEFT JOIN tags t ON t.id= pt.tag_id 
         WHERE p.id = $1
         GROUP BY p.id
     `
     err = tx.QueryRow(query, p.ID).Scan(&updatedId, &updatedTitle, &updatedContent, pq.Array(&updatedTags))
+
+    var tagLabels []string
+    for _, tag := range updatedTags {
+        if tag.Valid {
+            tagLabels = append(tagLabels, tag.String)
+        }
+    }
 
     if err != nil {
         return nil, err
@@ -230,7 +256,7 @@ func (p *Posts) GetPost(db *sql.DB) (map[string]interface{}, error) {
         "id": updatedId,
         "title": updatedTitle,
         "content": updatedContent,
-        "tags": updatedTags,
+        "tags": tagLabels,
     }
     return result, nil
 }

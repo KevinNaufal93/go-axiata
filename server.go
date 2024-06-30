@@ -12,6 +12,7 @@ import (
 
 type Server struct {
     pc *controllers.PostsController
+    tc *controllers.TagsController
 }
 
 func NewServer() (*Server, error) {
@@ -20,8 +21,10 @@ func NewServer() (*Server, error) {
         return nil, fmt.Errorf("init db failed %v", err)
     }
     pc := &controllers.PostsController{DB: db}
+    tc := &controllers.TagsController{DB: db}
     return &Server{
         pc: pc,
+        tc: tc,
     }, nil
 }
 
@@ -52,6 +55,24 @@ func (s *Server) handlePostsRoutes(w http.ResponseWriter, r *http.Request) {
     }
 }
 
+func (s *Server) handleTagsRoutes(w http.ResponseWriter, r *http.Request) {
+    switch {
+    case r.Method == "POST" && r.URL.Path == "/api/tags":
+        s.handleCreateTag(w, r)
+    case r.Method == "PUT" && strings.HasPrefix(r.URL.Path, "/api/tags/"):
+        s.handleUpdateTag(w, r)
+    case r.Method == "GET" && r.URL.Path == "/api/tags":
+        s.handleGetAllTags(w, r)
+    case r.Method == "GET" && strings.HasPrefix(r.URL.Path, "/api/tags/"):
+        s.handleGetTag(w, r)
+    case r.Method == "DELETE" && strings.HasPrefix(r.URL.Path, "/api/tags/"):
+        s.handleDeleteTag(w, r)
+    default:
+        http.NotFound(w, r)
+    }
+}
+
+////////////////////////////// POST SECTION ////////////////////////////////////
 func (s *Server) handleCreatePost(w http.ResponseWriter, r *http.Request) {
     var post struct {
         Title   string   `json:"title"`
@@ -76,7 +97,6 @@ func (s *Server) handleCreatePost(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleUpdatePost(w http.ResponseWriter, r *http.Request) {
     id := strings.TrimPrefix(r.URL.Path, "/api/posts/");
-    fmt.Println("ID is: ", id)
     var post struct {
         Title       string   `json:"title"`
         Content     string   `json:"content"`
@@ -133,7 +153,78 @@ func (s *Server) handleDeletePost(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(post)
 }
 
-func (s *Server) handleTagsRoutes(w http.ResponseWriter, r *http.Request) {
-    http.Error(w, "Not implemented", http.StatusNotImplemented)
+////////////////////////////// TAG SECTION ////////////////////////////////////
+func (s *Server) handleCreateTag(w http.ResponseWriter, r *http.Request) {
+    var tags struct {
+        ID   string   `json:"id"`
+        Label string   `json:"label"`
+    }
+
+    if err := json.NewDecoder(r.Body).Decode(&tags); err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    result, err := s.tc.CreateTag(tags.Label)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(result)
 }
 
+func (s *Server) handleUpdateTag(w http.ResponseWriter, r *http.Request) {
+    id := strings.TrimPrefix(r.URL.Path, "/api/tags/");
+    var tags struct {
+        ID   string   `json:"id"`
+        Label string   `json:"label"`
+    }
+
+    if err := json.NewDecoder(r.Body).Decode(&tags); err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    result, err := s.tc.UpdateTag(id, tags.Label)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(result)
+}
+
+func (s *Server) handleGetAllTags(w http.ResponseWriter, r *http.Request) {
+    tags, err := s.tc.GetAllTags()
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(tags)
+}
+
+func (s *Server) handleGetTag(w http.ResponseWriter, r *http.Request) {
+    id := strings.TrimPrefix(r.URL.Path, "/api/tags/")
+    tags, err := s.tc.GetTag(id)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusNotFound)
+        return
+    }
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(tags)
+}
+
+func (s *Server) handleDeleteTag(w http.ResponseWriter, r *http.Request) {
+    id := strings.TrimPrefix(r.URL.Path, "/api/tags/")
+    tags, err := s.tc.DeleteTag(id)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(tags)
+}
