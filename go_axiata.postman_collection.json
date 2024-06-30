@@ -1,0 +1,282 @@
+{
+	"info": {
+		"_postman_id": "855b6c55-966f-4363-bda2-7468944add5d",
+		"name": "Personal Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32476559",
+		"_collection_link": "https://qinerja-docs.postman.co/workspace/My-Workspace~d9ed5c4a-244e-426d-8384-31759377dca2/collection/32476559-855b6c55-966f-4363-bda2-7468944add5d?action=share&source=collection_link&creator=32476559"
+	},
+	"item": [
+		{
+			"name": "Post Posts",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "// {\n//     \"title\": \"Friday I'm in Love\",\n//     \"content\": \"Friday I'm in Love - The Cure\",\n//     \"tags\": [\"Punk\", \"Pop\"]\n// }\n// {\n//     \"title\": \"Space Oddity\",\n//     \"content\": \"Space Oddity - David Bowie\",\n//     \"tags\": [\"Psychedelic\", \"Folk\"]\n// }\n{\n    \"title\": \"The Man Who Sold The World\",\n    \"content\": \"The Man Who Sold The World - David Bowie\",\n    \"tags\": [\"Psychedelic\", \"Rock\"]\n}\n// {\n//     \"title\": \"Rocket Man (i think it's going to be a long long time)\",\n//     \"content\": \"Rocket Man (i think it's going to be a long long time) - Elton John\",\n//     \"tags\": [\"Pop\", \"Rock\"]\n// }\n// {\n//     \"title\": \"Ain't No Sunshine\",\n//     \"content\": \"Ain't No Sunshine - Bill Withers\",\n//     \"tags\": [\"Soul\"]\n// }\n// {\n//     \"title\": \"Sussudio\",\n//     \"content\": \"Sussudio - Phil Collins\",\n//      \"tags\": [\"Rock\", \"Pop\"]\n// }\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{8080}}/api/posts",
+					"host": [
+						"{{8080}}"
+					],
+					"path": [
+						"api",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post Tags",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"label\": \"Jazz\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{8080}}/api/tags",
+					"host": [
+						"{{8080}}"
+					],
+					"path": [
+						"api",
+						"tags"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Posts",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"The Man Who Sold The World - David Bowie\",\n    \"tags\": [\n        \"Psychedelic\",\n        \"Rock\",\n        \"Slow Jazz\"\n    ],\n    \"title\": \"The Man Who Sold The World\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{8080}}/api/posts/074945b1-b139-4636-97eb-b70a3169ebdf",
+					"host": [
+						"{{8080}}"
+					],
+					"path": [
+						"api",
+						"posts",
+						"074945b1-b139-4636-97eb-b70a3169ebdf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Tags",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\n        \"label\": \"Slow Jazz\"\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{8080}}/api/tags/239b5e92-5219-421c-b581-443fa0f01104",
+					"host": [
+						"{{8080}}"
+					],
+					"path": [
+						"api",
+						"tags",
+						"239b5e92-5219-421c-b581-443fa0f01104"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Post",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "// {\n//   \"title\": \"No Man Is An Island by John Donne\",\n//   \"content\": \"No man is an island, Entire of itself, Every man is a piece of the continent,A part of the main. If a clod be washed away by the sea, Europe is the less. As well as if a promontory were. As well as if a manor of thy friend’s Or of thine own were: Any man’s death diminishes me, Because I am involved in mankind, And therefore never send to know for whom the bell tolls,It tolls for thee.\",\n//    \"tags\":\n// }\n\n{\n    \"title\": \"Stopping by Woods On a Snowy Evening” by Robert Fros\",\n    \"content\": \"Whose woods these are I think I know. His house is in the village though; He will not see me stopping here To watch his woods fill up with snow. My little horse must think it queer To stop without a farmhouse near Between the woods and frozen lake The darkest evening of the year. He gives his harness bells a shake To ask if there is some mistake. The only other sound’s the sweep Of easy wind and downy flake. The woods are lovely, dark and deep, But I have promises to keep, And miles to go before I sleep, And miles to go before I sleep.\",\n        \"status\": \"draft\",\n       \"publish_date\": \"2023-06-25\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{8080}}/api/posts/3d38a273-57fe-41b5-8fb9-d45ed037b580",
+					"host": [
+						"{{8080}}"
+					],
+					"path": [
+						"api",
+						"posts",
+						"3d38a273-57fe-41b5-8fb9-d45ed037b580"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Tag",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "// {\n//   \"title\": \"No Man Is An Island by John Donne\",\n//   \"content\": \"No man is an island, Entire of itself, Every man is a piece of the continent,A part of the main. If a clod be washed away by the sea, Europe is the less. As well as if a promontory were. As well as if a manor of thy friend’s Or of thine own were: Any man’s death diminishes me, Because I am involved in mankind, And therefore never send to know for whom the bell tolls,It tolls for thee.\",\n//    \"tags\":\n// }\n\n{\n    \"title\": \"Stopping by Woods On a Snowy Evening” by Robert Fros\",\n    \"content\": \"Whose woods these are I think I know. His house is in the village though; He will not see me stopping here To watch his woods fill up with snow. My little horse must think it queer To stop without a farmhouse near Between the woods and frozen lake The darkest evening of the year. He gives his harness bells a shake To ask if there is some mistake. The only other sound’s the sweep Of easy wind and downy flake. The woods are lovely, dark and deep, But I have promises to keep, And miles to go before I sleep, And miles to go before I sleep.\",\n        \"status\": \"draft\",\n       \"publish_date\": \"2023-06-25\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{8080}}/api/tags/0f23bf1f-4b5d-4d96-9a58-6d1f07d41e5d",
+					"host": [
+						"{{8080}}"
+					],
+					"path": [
+						"api",
+						"tags",
+						"0f23bf1f-4b5d-4d96-9a58-6d1f07d41e5d"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Posts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{8080}}/api/posts",
+					"host": [
+						"{{8080}}"
+					],
+					"path": [
+						"api",
+						"posts"
+					],
+					"query": [
+						{
+							"key": "tags",
+							"value": "Psychedelic",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Post",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{8080}}/api/posts/c5dc4977-f774-4e30-aea1-e2823c2b6f67",
+					"host": [
+						"{{8080}}"
+					],
+					"path": [
+						"api",
+						"posts",
+						"c5dc4977-f774-4e30-aea1-e2823c2b6f67"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Post With Query Tag",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{8080}}/api/posts?tags=Psychedelic",
+					"host": [
+						"{{8080}}"
+					],
+					"path": [
+						"api",
+						"posts"
+					],
+					"query": [
+						{
+							"key": "tags",
+							"value": "Psychedelic"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tags",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{8080}}/api/tags",
+					"host": [
+						"{{8080}}"
+					],
+					"path": [
+						"api",
+						"tags"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tag",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{8080}}/api/tags/cc4407c6-e661-490e-b978-5f56312c1aa3",
+					"host": [
+						"{{8080}}"
+					],
+					"path": [
+						"api",
+						"tags",
+						"cc4407c6-e661-490e-b978-5f56312c1aa3"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
