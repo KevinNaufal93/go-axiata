@@ -11,8 +11,8 @@ import (
 const (
 	host     = "localhost"
 	port     = 5432
-	user     = "testUser"
-	password = "kevin1234"
+	user     = "postgres"
+	password = ""
 	dbname   = "interview-golang"
 )
 
