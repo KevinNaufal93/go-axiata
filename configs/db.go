@@ -12,7 +12,7 @@ const (
 	host     = "localhost"
 	port     = 5432
 	user     = "postgres"
-	password = ""
+	password = "1234"
 	dbname   = "interview-golang"
 )
 
