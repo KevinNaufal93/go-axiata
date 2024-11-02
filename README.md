@@ -1,5 +1,5 @@
-# go-axiata
-Interview for Go Axiata By Kevin Naufal Permana
+# GO CRUD Server
+Fun CRUD exploration using vanilla GO By Kevin Naufal Permana
 
 # How to run
 1. Please use "go get" on these items first
